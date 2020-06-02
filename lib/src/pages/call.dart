@@ -297,14 +297,24 @@ class _CallPageState extends State<CallPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Agora Flutter QuickStart'),
-      ),
+      // appBar: AppBar(
+      //   title: Text('Agora Flutter QuickStart'),
+      // ),
       backgroundColor: Colors.black,
       body: Center(
         child: Stack(
           children: <Widget>[
-            _viewRows(),
+            Column(
+              children: [
+                Expanded(
+                  flex: 4,
+                  child: VideoApp(),
+                ),
+                Expanded(
+                  flex: 6,
+                  child: _viewRows(),
+                ),
+              ]),
             _panel(),
             _toolbar(),
           ],
