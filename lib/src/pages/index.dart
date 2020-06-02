@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
+import './video.dart';
 
 class IndexPage extends StatefulWidget {
   @override
@@ -65,6 +66,21 @@ class IndexState extends State<IndexPage> {
                     )
                   ],
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: RaisedButton(
+                        onPressed: onPlay,
+                        child: Text('Play'),
+                        color: Colors.blueAccent,
+                        textColor: Colors.white,
+                      ),
+                    )
+                  ],
+                ),
               )
             ],
           ),
@@ -73,6 +89,14 @@ class IndexState extends State<IndexPage> {
     );
   }
 
+  Future<void> onPlay() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => 
+      VideoApp(),
+      ),
+    );
+  }
   Future<void> onJoin() async {
     // update input validation
     setState(() {
@@ -87,7 +111,8 @@ class IndexState extends State<IndexPage> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CallPage(
+          builder: (context) => 
+          CallPage(
             channelName: _channelController.text,
           ),
         ),

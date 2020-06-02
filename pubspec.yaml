@@ -21,6 +21,7 @@ dependencies:
   cupertino_icons: ^0.1.2
   agora_rtc_engine: 1.0.5
   permission_handler: ^3.0.0
+  video_player: '>=0.10.11+1 <2.0.0'
 
 dev_dependencies:
   flutter_test:
