@@ -54,7 +54,7 @@ class _AboutUsState extends State<AboutUsList> {
   static final japanese_goblin = parser.emojify(':japanese_goblin:');
   static final heart = parser.emojify(':heart:');
   static final alien = parser.emojify(':alien:');
-  
+
   List<WiseWords> words = [
     WiseWords(name: 'Tamelly ${smile}', desc: 'WeOKE! has helped me improve my singing!'),
     WiseWords(name: 'Guan Yew ${fire}', desc: 'Gonna sign up for Singapore Idol once covid is over!'),
@@ -96,7 +96,7 @@ class _AboutUsState extends State<AboutUsList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: words.map((item) => wordsTemplate(item)).toList()
       )
     );
