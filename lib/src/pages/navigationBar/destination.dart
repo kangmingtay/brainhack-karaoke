@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 //List of pages and its superficial properties
 class Destination {
@@ -12,5 +11,5 @@ class Destination {
 
 const List<Destination> allDestinations = <Destination>[
   Destination(0, 'Home', Icons.home, Colors.teal),
-  Destination(1, 'Secondary', Icons.business, Colors.cyan)
+  Destination(1, 'WeOKE! Team', Icons.business, Colors.cyan)
 ];
