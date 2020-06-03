@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:agora_flutter_quickstart/src/pages/call.dart';
 import 'package:agora_flutter_quickstart/src/services/database.dart';
+import 'package:agora_flutter_quickstart/src/utils/parser.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -23,9 +24,6 @@ class _SongConsoleState extends State<SongConsole>{
 
   @override
   void initState() {
-    databaseMethods.working().then((value) {
-      print(value);
-    });
     getKTVRoomList();
     super.initState();
   }
@@ -40,63 +38,61 @@ class _SongConsoleState extends State<SongConsole>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-          controller: searchTextEdittingController,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            // contentPadding: const EdgeInsets.only(left: 14.0, bottom: 3.0, top: 3.0),
-            border: InputBorder.none,
-            hintText: 'Search url videos',
-            hintStyle: TextStyle(color: Colors.black54),
-          ),
-        ),
-        // leading: Icon(Icons.exit_to_app),
-        actions:[
-          Builder(
-            builder: (context) => IconButton(
-              icon: Icon(Icons.queue_music),
-              onPressed: () => Scaffold.of(context).openEndDrawer(),
-              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
-            ),
-          ),
-          
-        ]
-      ),
-      endDrawer: Drawer(
-        child: Column(
-          children: [
-            Container(
-              // color: Colors.white,
-              height: 100,
-              child: DrawerHeader(
-                child: Text('Song Queue', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),),
-                // child: Column(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   crossAxisAlignment: CrossAxisAlignment.stretch,
-                //   children: <Widget>[
-                //     Text('Guide to Make Money'),
-                //   ],
-                // ),
-                
+    return StreamBuilder(
+      stream: songListStream,
+      builder: (context, snapshot) {
+        return Scaffold(
+          appBar: AppBar(
+            title: TextField(
+              controller: searchTextEdittingController,
+              onSubmitted: (value) {
+                databaseMethods.createOrUpdateKtvRoom(widget.channelName, {
+                  'index': snapshot.data.documents.length,
+                  'url': value
+                });
+                searchTextEdittingController.clear();
+              },
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                // contentPadding: const EdgeInsets.only(left: 14.0, bottom: 3.0, top: 3.0),
+                border: InputBorder.none,
+                hintText: 'Enter Video Url',
+                hintStyle: TextStyle(color: Colors.black54),
               ),
             ),
-            Expanded(
-              child: StreamBuilder(
-                stream: songListStream,
-                builder: (context, snapshot) {
-                  print(snapshot.data);
-                  return snapshot.hasData ?
+            // leading: Icon(Icons.exit_to_app),
+            actions:[
+              Builder(
+                builder: (context) => IconButton(
+                  icon: Icon(Icons.queue_music),
+                  onPressed: () => Scaffold.of(context).openEndDrawer(),
+                  tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+                ),
+              ),
+              
+            ]
+          ),
+          endDrawer: Drawer(
+            child: Column(
+              children: [
+                Container(
+                  height: 100,
+                  child: DrawerHeader(
+                    child: Text('Song Queue', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),),
+                  ),
+                ),
+                Expanded(
+                  child: snapshot.hasData ?
                     ListView.builder(
                       padding: EdgeInsets.only(top: 0.0),
                       itemCount: snapshot.data.documents.length,
                       itemBuilder: (context, index) {
+                        var songname = SongNameParser.getSongName(snapshot.data.documents[index].data['url']);
                         return Ink(
                           // color: Colors.lightBlue.withAlpha(100),
                           child: ListTile(
-                            title: Text("${snapshot.data.documents[index].data["songname"]}"),
+                            title: Text('${songname}'),
                             onTap: () {},
                             leading: IconButton(
                               icon: Icon(Icons.arrow_upward),
@@ -110,17 +106,17 @@ class _SongConsoleState extends State<SongConsole>{
                         );
                       },
                     )
-                    : Container();
-                }
-              ),
+                    : Container()
+                ),
+              ]
             ),
-          ]
-        ),
-      ),
-      body: Container() 
-      // CallPage(
-      //       channelName: widget.channelName,
-      //     ),
+          ),
+          body: Container() 
+          // CallPage(
+          //       channelName: widget.channelName,
+          //     ),
+        );
+      }
     );
   }
 }

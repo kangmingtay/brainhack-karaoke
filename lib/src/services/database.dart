@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseMethods {
-  void createKtvRoom(String ktvRoomId, ktvRoomMap) {
+  void createOrUpdateKtvRoom(String ktvRoomId, ktvRoomMap) {
     Firestore.instance.collection('ktvRoom')
-      .document(ktvRoomId).setData(ktvRoomMap).catchError((e){
+      .document(ktvRoomId).collection('songList')
+      .add(ktvRoomMap).catchError((e){
         print(e.toString());
       });
   }
@@ -14,11 +15,8 @@ class DatabaseMethods {
     return await Firestore.instance.collection('ktvRoom')
     .document(ktvRoomId)
     .collection('songList')
+    .orderBy('index')
     .snapshots();
   }
-
-  working() async {
-    return await Firestore.instance.collection('ktvRoom')
-    .getDocuments();
-  }
+  
 }
