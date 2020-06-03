@@ -16,9 +16,21 @@ class CallPage extends StatefulWidget {
 }
 
 class _CallPageState extends State<CallPage> {
-  static final _users = <int>[];
+  // static final _users = <int>[];
+  static final Map<int, ClientRole> _users = {};
   final _infoStrings = <String>[];
   bool muted = false;
+  final Map<String, int> config = {
+    "audioBitrate": 400, 
+    "audioSampleRate": 1,
+    "height": 180,
+    "videoBitrate": 400, 
+    "videoFramerate": 15, 
+    "videoGop": 30, 
+    "width": 320, 
+  };
+  ChannelProfile profile = ChannelProfile.LiveBroadcasting;
+  ClientRole role;
 
   @override
   void dispose() {
@@ -49,17 +61,24 @@ class _CallPageState extends State<CallPage> {
     }
 
     await _initAgoraRtcEngine();
+    // await _injectAgoraStream();
     _addAgoraEventHandlers();
     await AgoraRtcEngine.enableWebSdkInteroperability(true);
     await AgoraRtcEngine.setParameters(
         '''{\"che.video.lowBitRateStreamParameter\":{\"width\":320,\"height\":180,\"frameRate\":15,\"bitRate\":140}}''');
+    await AgoraRtcEngine.setChannelProfile(profile);
     await AgoraRtcEngine.joinChannel(null, widget.channelName, null, 0);
+    AgoraRtcEngine.addInjectStreamUrl('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4', AgoraLiveInjectStreamConfig.fromJson(config));
   }
 
   /// Create agora sdk instance and initialize
   Future<void> _initAgoraRtcEngine() async {
     await AgoraRtcEngine.create(APP_ID);
     await AgoraRtcEngine.enableVideo();
+  }
+
+  Future<void> _injectAgoraStream() async {
+    await AgoraRtcEngine.addInjectStreamUrl('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4', AgoraLiveInjectStreamConfig.fromJson(config));
   }
 
   /// Add agora event handlers
@@ -91,9 +110,15 @@ class _CallPageState extends State<CallPage> {
 
     AgoraRtcEngine.onUserJoined = (int uid, int elapsed) {
       setState(() {
-        final info = 'userJoined: $uid';
+        if (_users.length == 0) {
+          role = ClientRole.Broadcaster;
+        } else {
+          role = ClientRole.Audience;
+        }
+        AgoraRtcEngine.setClientRole(role);
+        final info = 'userJoined: $uid role: $role';
         _infoStrings.add(info);
-        _users.add(uid);
+        _users[uid] = role;
       });
     };
 
@@ -116,6 +141,21 @@ class _CallPageState extends State<CallPage> {
         _infoStrings.add(info);
       });
     };
+    
+    // Map<String, dynamic> toJson() => {'url': 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4', 'uid': _users[0], 'status': status};
+
+    // Map<String, dynamic> toJson() {
+    //   int status;
+    //   Map<String, dynamic> result = {'url': 'https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4', 'uid': _users[0], 'status': status};
+    //   String url = result['url'];
+    //   int uid = result['uid']; 
+    //   setState(() {
+    //     final info = 'url: $url uid: $uid status: $status';
+    //     _infoStrings.add(info);
+    //   });
+    //   return result;
+    // };
+    // AgoraRtcEngine.onStreamInjectedStatus(toJson());
   }
 
   /// Helper function to get list of native views
@@ -123,7 +163,7 @@ class _CallPageState extends State<CallPage> {
     final List<AgoraRenderWidget> list = [
       AgoraRenderWidget(0, local: true, preview: true),
     ];
-    _users.forEach((int uid) => list.add(AgoraRenderWidget(uid)));
+    _users.forEach((int uid, ClientRole role) => list.add(AgoraRenderWidget(uid)));
     return list;
   }
 
