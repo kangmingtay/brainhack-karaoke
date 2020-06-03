@@ -1,8 +1,8 @@
 import 'package:agora_flutter_quickstart/src/pages/songconsole.dart';
 import 'package:flutter/material.dart';
-import './src/pages/index.dart';
+import './src/pages/homePage.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(MaterialApp(home: HomePage()));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
