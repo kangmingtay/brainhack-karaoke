@@ -20,7 +20,7 @@ class SongConsole extends StatefulWidget {
 class _SongConsoleState extends State<SongConsole>{
   TextEditingController searchTextEdittingController = TextEditingController();  
   DatabaseMethods databaseMethods = DatabaseMethods();
-  Stream songListStream;
+  Stream ktvRoomStream;
 
   @override
   void initState() {
@@ -29,9 +29,9 @@ class _SongConsoleState extends State<SongConsole>{
   }
 
   void getKTVRoomList() async {
-    await databaseMethods.getSongList(widget.channelName).then((value){
+    await databaseMethods.getKtvRoom(widget.channelName).then((value){
       setState(() {
-        songListStream = value;
+        ktvRoomStream = value;
       });
     });
   }
@@ -39,17 +39,20 @@ class _SongConsoleState extends State<SongConsole>{
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: songListStream,
+      stream: ktvRoomStream,
       builder: (context, snapshot) {
+        var songlist;
+        try {
+          songlist = snapshot.data['songlist'];
+        } catch (e) {
+          songlist = [];
+        }
         return Scaffold(
           appBar: AppBar(
             title: TextField(
               controller: searchTextEdittingController,
               onSubmitted: (value) {
-                databaseMethods.createOrUpdateKtvRoom(widget.channelName, {
-                  'index': snapshot.data.documents.length,
-                  'url': value
-                });
+                databaseMethods.createOrUpdateKtvRoom(widget.channelName, value);
                 searchTextEdittingController.clear();
               },
               decoration: InputDecoration(
@@ -79,16 +82,17 @@ class _SongConsoleState extends State<SongConsole>{
                 Container(
                   height: 100,
                   child: DrawerHeader(
-                    child: Text('Song Queue', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),),
+                    child: Text('Song List', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w700),),
                   ),
                 ),
                 Expanded(
                   child: snapshot.hasData ?
                     ListView.builder(
                       padding: EdgeInsets.only(top: 0.0),
-                      itemCount: snapshot.data.documents.length,
+                      itemCount: songlist.length,
                       itemBuilder: (context, index) {
-                        var songname = SongNameParser.getSongName(snapshot.data.documents[index].data['url']);
+                        var songUrl = songlist[index];
+                        var songname = SongNameParser.getSongName(songUrl);
                         return Ink(
                           // color: Colors.lightBlue.withAlpha(100),
                           child: ListTile(
@@ -96,12 +100,16 @@ class _SongConsoleState extends State<SongConsole>{
                             onTap: () {},
                             leading: IconButton(
                               icon: Icon(Icons.arrow_upward),
-                              onPressed: () {},
+                              onPressed: () {
+                                databaseMethods.insertSong(widget.channelName, songUrl, songlist);
+                              },
                             ),
-                            trailing: IconButton(
+                            trailing:  IconButton(
                               icon: Icon(Icons.cancel),
-                              onPressed: () {},
-                            )
+                              onPressed: () {
+                                databaseMethods.deleteSong(widget.channelName, songUrl);
+                              },
+                            )  
                           ),
                         );
                       },
@@ -111,10 +119,23 @@ class _SongConsoleState extends State<SongConsole>{
               ]
             ),
           ),
-          body: Container() 
-          // CallPage(
-          //       channelName: widget.channelName,
-          //     ),
+          body: SingleChildScrollView(
+            child : snapshot.hasData && songlist.length > 0 ? Column(
+              children: [
+                Text('Now Playing (cos its first in the list)'),
+                Container(
+                  margin: EdgeInsets.all(16),
+                  child: snapshot.hasData ? Center(child: Text(SongNameParser.getSongName(songlist[0]), style: TextStyle(fontSize: 25, color: Colors.black, fontWeight: FontWeight.w700),)) 
+                  : CircularProgressIndicator(),
+                ),
+                Text(snapshot.hasData ? songlist[0] : '', style: TextStyle(fontSize: 11),),
+              ],
+            ) 
+            : Text('add songs to play!')
+            // CallPage(
+            //       channelName: widget.channelName,
+            //     ),
+          ),
         );
       }
     );
