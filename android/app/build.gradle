@@ -33,7 +33,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.agoraflutterquickstart"
+        applicationId "com.brainhack2020.CodeExp"
         minSdkVersion 16
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
@@ -46,6 +46,7 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'x86' ,'arm64-v8a'
         }
+        multiDexEnabled true
     }
 
     buildTypes {
@@ -65,4 +66,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.firebase:firebase-core:17.4.2'
 }
+
+
+apply plugin: 'com.google.gms.google-services'

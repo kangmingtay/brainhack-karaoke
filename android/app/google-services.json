@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "154575163642",
+    "firebase_url": "https://brainhack2020-code-exp.firebaseio.com",
+    "project_id": "brainhack2020-code-exp",
+    "storage_bucket": "brainhack2020-code-exp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:154575163642:android:01e20afa7de3b3ba8b7943",
+        "android_client_info": {
+          "package_name": "com.brainhack2020.CodeExp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "154575163642-b1hp88mejlk9hde7r5oi9loe2l8tqbae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brainhack2020.CodeExp",
+            "certificate_hash": "d72c4ef707245e31e48a4081fd0e3afd5e34a8b3"
+          }
+        },
+        {
+          "client_id": "154575163642-qo7qshhrkguafi3ofga33knemgil15vf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxrWeOlpkHbJC2JRMwnG1D11lq_jtgbSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "154575163642-qo7qshhrkguafi3ofga33knemgil15vf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "154575163642-5777le4jno710clrkbv06uovgpqdggel.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.brainhack2020.CodeExp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:agora_flutter_quickstart/src/pages/songconsole.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './call.dart';
@@ -112,7 +113,7 @@ class IndexState extends State<IndexPage> {
         context,
         MaterialPageRoute(
           builder: (context) => 
-          CallPage(
+          SongConsole(
             channelName: _channelController.text,
           ),
         ),
