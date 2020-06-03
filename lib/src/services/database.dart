@@ -35,4 +35,10 @@ class DatabaseMethods {
       .document(ktvRoomId)
       .setData({'songlist' : FieldValue.arrayUnion([song] + songlist)}, merge: false);
   }
+
+  void createOrUpdateKtvRoomVideoState(String ktvRoomId, state) {
+    Firestore.instance.collection('ktvRoom')
+      .document(ktvRoomId)
+      .setData({'videostate' : state}, merge: true);
+  }
 }
